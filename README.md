@@ -1,6 +1,6 @@
 ﻿## 뇌섹남녀 프로젝트
 - 뇌섹남녀는 문제적남자 프로그램에 나온여러가지 문제들을 풀어볼 수 있는 웹 사이트입니다.
-<img width="100%" src="https://github.com/ojs104/sexybrain-project/issues/1" />
+<img width="100%" src="[https://github.com/ojs104/sexybrain-project/issues/1](https://user-images.githubusercontent.com/143478298/283415215-7f3f1334-83e2-478a-8a19-4515ade4c956.png)" />
 
 ## 목차
 
