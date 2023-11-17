@@ -27,8 +27,13 @@ if ($myRankResult->num_rows > 0) {
     $myRankRow = $myRankResult->fetch_assoc();
     $myRank = $myRankRow['myRank'];
 } else {
-    $myRank = "아직 순위가 결정되지 않았습니다.";
+    $myRank = " ?? ";
 }
+
+$totalQuizSql = "SELECT COUNT(*) as totalQuiz FROM quiz";
+$totalQuizResult = $connect->query($totalQuizSql);
+$totalQuizRow = $totalQuizResult->fetch_assoc();
+$totalQuizId = $totalQuizRow['totalQuiz'];
 ?>
 
 <!DOCTYPE html>
@@ -38,13 +43,13 @@ if ($myRankResult->num_rows > 0) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>뇌섹남녀-boardWrite</title>
-    <link rel="stylesheet" href="../quiz/css/quiz.css">
+    <link rel="stylesheet" href="../assets/css/quiz.css">
     <link rel="stylesheet" href="../assets/css/style.css">
 
     <style>
-    .answerImg {
-        width: 90%;
-    }
+        .answerImg {
+            width: 90%;
+        }
 
     #next {
         background-color: var(--primary-color);
@@ -61,53 +66,54 @@ if ($myRankResult->num_rows > 0) {
         background-color: #5a68ad;
     }
 
-    .rank__inner {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-    }
+        .rank__inner {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
 
-    .rank__inner li {
-        display: inline-block;
-    }
+        .rank__inner li {
+            display: inline-block;
+        }
 
-    .rank__inner li:nth-child(1) {
-        font-size: 22px;
-        font-weight: 700;
-    }
+        .rank__inner li:nth-child(1) {
+            font-size: 22px;
+            font-weight: 700;
+        }
 
-    .rank__inner li:nth-child(1)::before {
-        content: '🥇';
-    }
+        .rank__inner li:nth-child(1)::before {
+            content: '🥇';
+        }
 
-    .rank__inner li:nth-child(2) {
-        font-size: 18px;
-        font-weight: 600;
-        margin-left: 15px;
-    }
+        .rank__inner li:nth-child(2) {
+            font-size: 18px;
+            font-weight: 600;
+            margin-left: 15px;
+        }
 
-    .rank__inner li:nth-child(2)::before {
-        content: '🥈';
-    }
+        .rank__inner li:nth-child(2)::before {
+            content: '🥈';
+        }
 
-    .rank__inner li:nth-child(3) {
-        font-size: 16px;
-        font-weight: 500;
-        margin-left: 15px;
-    }
+        .rank__inner li:nth-child(3) {
+            font-size: 16px;
+            font-weight: 500;
+            margin-left: 15px;
+        }
 
-    .rank__inner li:nth-child(3)::before {
-        content: '🥉';
-    }
+        .rank__inner li:nth-child(3)::before {
+            content: '🥉';
+        }
 
-    .myRank {
-        font-size: 20px;
-        margin-left: 15px;
-        background-color: #9E3436;
-        padding: 0.5rem 1rem;
-        border-radius: 13px;
-        color: #fff;
-    }
+        .myRank {
+                        font-size: 20px;
+            margin-left: 15px;
+            background-color: #9E3436;
+            padding: 0.5rem 1rem;
+            border-radius: 13px;
+            color: #fff;
+display: inline-block;
+        }
     </style>
 
 </head>
@@ -124,11 +130,9 @@ if ($myRankResult->num_rows > 0) {
                     <div class="quiz_q_wrap quiz_class">
                         <div class="quiz_timer">
                             <span id="timer"><span id="timeLeft">0:00</span></span>
-
                         </div>
-
-
                         <div class="q_question blind" id="modal01">
+
                             <div class="question_wrap">
                                 <em>Q<i id="q_em">uiz</i></em>
                                 <p>
@@ -149,7 +153,7 @@ if ($myRankResult->num_rows > 0) {
                                 ?>
                             </div>
                         </div>
-                        <!-- 모달01 -->
+<!-- 모달01 -->
 
                         <div class="q_question" id="modal02">
                             <div class="question_wrap">
@@ -167,8 +171,9 @@ if ($myRankResult->num_rows > 0) {
                     </div>
                     <form action="checkAnswer.php" method="post" class="q_answer">
                         <input type="hidden" id="quizId" name="quizId" value="<?= $quizId ?>">
+                        <input type="hidden" id="timeLimit" name="timeLimit">
                         <label for="answer">정답 : </label>
-                        <input type="text" id="answer" name="answer">
+                        <input type="next" id="answer" name="answer">
                         <input type="submit" id="submit" value="제출">
                         <input type="next" id="next" value="다음">
                     </form>
@@ -185,7 +190,7 @@ if ($myRankResult->num_rows > 0) {
                                     echo "<li><span>" . $rank . "위! " . $row["youId"] . " 님 " . $row["actualTime"] . "초</span></li>";
                                     $rank++;
                                 }
-                                echo "<li class='myRank'><span>나의 순위: " . $myRank . "위</span></li>";
+                                echo "<p class='myRank'><span>나의 순위: " . $myRank . "위</span></p>";
                             } else {
                                 echo "<p>아직 문제를 푼 사람이 없습니다. 지금 풀면 여러분이 1등🥇!!</p>";
                             }
@@ -193,7 +198,6 @@ if ($myRankResult->num_rows > 0) {
                         </ul>
                     </div>
                 </div>
-                <!-- rank -->
             </section>
         </main>
         <!-- main -->
@@ -224,119 +228,61 @@ if ($myRankResult->num_rows > 0) {
         </div>
     </div>
 
-
-
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
-    $(document).ready(function() {
-        let timeLimit = <?= $quizInfo['timeLimit'] ?>;
-        let timerInterval;
+    $(document).ready(function () {
 
-        // 타이머 업데이트 함수
-        function updateTimer() {
-            let minutes = Math.floor(timeLimit / 60);
-            let seconds = timeLimit % 60;
+        $('#submit').prop('disabled', true);
 
-            // 시간을 2자리 숫자로 표시
-            let minutesStr = (minutes < 10) ? "0" + minutes : minutes;
-            let secondsStr = (seconds < 10) ? "0" + seconds : seconds;
-
-            // 시간 표시 업데이트
-            $('#timeLeft').text(minutesStr + ":" + secondsStr);
-
-            // 시간 감소
-            timeLimit--;
-
-            // 시간 종료 시 처리
-            if (timeLimit < 0) {
-                clearInterval(timerInterval);
-                // 여기에서 시간이 종료되었을 때 실행해야 할 코드를 추가할 수 있습니다.
-                $('#result').text("시간이 종료되었습니다.");
-                $('#showAnswer').removeClass('blind');
-                $('#showHint').removeClass('blind');
-                $('#showRetry').removeClass('blind');
-                $('#showNext').removeClass('blind');
-                $('#answerText').text(result.answer);
-                $('#modal').removeClass('blind');
-                $('#modal').css('display', 'block');
-            }
-        }
-
-        // 시작 버튼 클릭 이벤트 핸들러
-        $('#startTimer').click(function() {
-            // 시작 버튼을 누르면 타이머 시작
-            timerInterval = setInterval(updateTimer, 1000);
-            // 버튼 상태 변경
-            $('#startTimer').addClass('blind');
-
-            $('#modal02').addClass('blind');
-            $('#modal01').removeClass('blind');
-        });
-
-
-        // 다음 버튼 클릭 이벤트 핸들러
-        let totalQuizId = 3; // 총 문제 개수를 여기에 입력하세요.
-
-        $('#next').click(function() {
-            let currentQuizId = <?= $quizId ?>;
-            if (currentQuizId >= totalQuizId) {
-                alert('마지막 문제입니다.');
-            } else {
-                let nextQuizId = currentQuizId + 1;
-                location.href = 'quiz.php?quizId=' + nextQuizId;
-            }
-        });
-
-
-        // 제출 버튼 클릭 이벤트 핸들러
-        $('#submit').click(function(e) {
-            e.preventDefault();
-
-            let quizId = $('#quizId').val();
-            let answer = $('#answer').val();
-
+        // 좋아요 버튼 클릭 이벤트 핸들러
+        $('#likeButton').click(function () {
+            let quizId = $(this).data("quizid");
             $.ajax({
-                url: 'checkAnswer.php',
+                url: 'likeQuiz.php',
                 type: 'post',
                 data: {
-                    quizId: quizId,
-                    answer: answer
+                    quizId: quizId
                 },
-                success: function(response) {
-                    let result = JSON.parse(response);
-
-                    if (result.correct) {
-                        $('#result').text("정답입니다!");
-                    } else {
-                        $('#result').text("틀렸습니다.");
-                        $('#showAnswer').removeClass('blind');
-                        $('#showHint').removeClass('blind');
-                        $('#showRetry').removeClass('blind');
-                        $('#showNext').removeClass('blind');
-                        $('#answerText').text(result.answer);
+                success: function (response) {
+                    if (response === 'liked') {
+                        $('#likeButton').addClass('liked');
+                        localStorage.setItem('liked_' + quizId, 'liked');
+                    } else if (response === 'already_liked') {
+                        $('#likeButton').removeClass('liked');
+                        localStorage.removeItem('liked_' + quizId);
                     }
-
-                    $('#modal').css('display', 'block');
                 }
             });
         });
+        $('.q_answer').on('submit', function(e) {
+        var answer = $.trim($("#answer").val());
+        if (answer.length == 0) {
+            e.preventDefault();
+            alert('정답을 입력해주세요.');
+        }
     });
 
-
-    $('#submit').click(function(e) {
+    $('#submit').click(function (e) {
         e.preventDefault();
+        let answer = $('#answer').val().trim();
+        
+        if (answer === '') {
+            alert('정답을 입력해주세요.');
+            return;
+        }
 
         let quizId = $('#quizId').val();
-        let answer = $('#answer').val();
+        let timeLimit = $('#timeLimit').val();
 
         $.ajax({
             url: 'checkAnswer.php',
             type: 'post',
             data: {
                 quizId: quizId,
-                answer: answer
+                answer: answer,
+                timeLimit: timeLimit
             },
-            success: function(response) {
+            success: function (response) {
                 let result = JSON.parse(response);
 
                 if (result.correct) {
@@ -354,71 +300,109 @@ if ($myRankResult->num_rows > 0) {
             }
         });
     });
-    //정답보기 버튼 클릭 시
-    $('#showAnswer').click(function() {
-        $('#answerText').removeClass('blind');
-    });
 
-    $('#showHint').click(function() {
-        $('.hint').removeClass('blind');
-    });
-
-    $('#showRetry').click(function() {
-        location.reload();
-    });
-
-    $('#showNext').click(function() {
-        let currentQuizId = <?= $quizId ?>;
-        let nextQuizId = currentQuizId + 1;
-        location.href = 'quiz.php?quizId=' + nextQuizId;
-    });
-
-    $('#go__list').click(function() {
-        location.href = 'quizHome.php';
-    });
-
-    $('.close').click(function() {
-        $('#modal').css('display', 'none');
-    });
+    $('#startTimer').click(function() {
+        $('#submit').prop('disabled', false);
+        timerInterval = setInterval(updateTimer, 1000);
+        $('#startTimer').addClass('blind');
+        $('#modal02').addClass('blind');
+        $('#modal01').removeClass('blind');
 
 
-    // 퀴즈가 이미 좋아요된 상태인지 확인하고 CSS를 업데이트합니다.
-    let quizId = $('#likeButton').data("quizid");
-    let likedStatus = localStorage.getItem('liked_' + quizId);
+            $('#submit').click(function (e) {
+                e.preventDefault();
+                let answer = $('#answer').val().trim();
+                
+                if (answer === '') {
+                    alert('정답을 입력해주세요.');
+                    return;
+                }
 
-    if (likedStatus === 'liked') {
-        $('#likeButton').addClass('liked');
-    }
+                let quizId = $('#quizId').val();
+                let timeLimit = $('#timeLimit').val();
 
-    // 좋아요 버튼 클릭 이벤트 핸들러
-    $('#likeButton').click(function() {
-        let quizId = $(this).data("quizid");
+                $.ajax({
+                    url: 'checkAnswer.php',
+                    type: 'post',
+                    data: {
+                        quizId: quizId,
+                        answer: answer,
+                        timeLimit: timeLimit
+                    },
+                    success: function (response) {
+                        let result = JSON.parse(response);
 
-        $.ajax({
-            url: 'likeQuiz.php',
-            type: 'post',
-            data: {
-                quizId: quizId
-            },
-            success: function(response) {
-                if (response === 'liked') {
-                    // 좋아요가 성공적으로 추가된 경우
-                    $('#likeButton').addClass('liked');
-                    // 로컬 저장소에 좋아요 상태 저장
-                    localStorage.setItem('liked_' + quizId, 'liked');
-                } else if (response === 'already_liked') {
-                    // 이미 좋아요가 추가된 경우
-                    $('#likeButton').removeClass('liked');
-                    // 로컬 저장소에서 좋아요 상태 제거
-                    localStorage.removeItem('liked_' + quizId);
+                        if (result.correct) {
+                            $('#result').text("정답입니다!");
+                        } else {
+                            $('#result').text("틀렸습니다.");
+                            $('#showAnswer').removeClass('blind');
+                            $('#showHint').removeClass('blind');
+                            $('#showRetry').removeClass('blind');
+                            $('#showNext').removeClass('blind');
+                            $('#answerText').text(result.answer);
+                        }
+
+                        $('#modal').css('display', 'block');
+                    }
+                });
+            });
+
+            $('#showAnswer').click(function() {
+                $('#answerText').removeClass('blind');
+                $('.hint').addClass('blind')
+            });
+
+            $('#showHint').click(function () {
+                $('.hint').removeClass('blind');
+                $('#answerText').addClass('blind');
+            });
+
+            $('#showRetry').click(function () {
+                location.reload();
+            });
+
+            $('#showNext').click(function() {
+                let currentQuizId = <?= $quizId ?>;
+                let nextQuizId = currentQuizId + 1;
+                location.href = 'quiz.php?quizId=' + nextQuizId;
+            });
+
+            $('#go__list').click(function() {
+                location.href = 'quizHome.php';
+            });
+
+            $('.close').click(function () {
+                $('#modal').css('display', 'none');
+            });
+
+            var timeLimit = <?= $quizInfo['timeLimit'] ?>;
+
+            function updateTimer() {
+                var minutes = Math.floor(timeLimit / 60);
+                var seconds = timeLimit % 60;
+
+                var minutesStr = (minutes < 10) ? "0" + minutes : minutes;
+                var secondsStr = (seconds < 10) ? "0" + seconds : seconds;
+
+                $('#timeLeft').text(minutesStr + ":" + secondsStr);
+                timeLimit--;
+                $('#timeLimit').val(timeLimit);
+
+                if (timeLimit < 0) {
+                    clearInterval(timerInterval);
+                    $('#result').text("시간이 종료되었습니다.");
+                    $('#showAnswer').removeClass('blind');
+                    $('#showHint').removeClass('blind');
+                    $('#showRetry').removeClass('blind');
+                    $('#answerText').text(result.answer);
+                    $('#modal').css('display', 'block');
+
                 }
             }
         });
-
-
     });
     </script>
-
 </body>
 
 </html>

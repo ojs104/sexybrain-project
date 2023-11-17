@@ -64,9 +64,9 @@
                                 <tbody class="tby">
                                     <tr>
                                         <th>제목</th>
-                                        <td class="b__td_title">제목:<?=$boardInfo['boardTitle']?></td>
+                                        <td class="b__td_title"><?=$boardInfo['boardTitle']?></td>
                                         <th>등록자</td>
-                                        <td class="writer"> ID: <?=$boardInfo['boardAuthor']?></td>
+                                        <td class="writer"><?=$boardInfo['boardAuthor']?></td>
                                     </tr>
                                     <tr>
                                         <th>등록일</td>
@@ -74,14 +74,14 @@
                                     </tr>
                                     <tr>
                                         <th>조회수</td>
-                                        <td>조회수:<?=$boardViewInfo['boardView']?></td>
+                                        <td><?=$boardViewInfo['boardView']?></td>
                                     </tr>
                                     <tr class="b_t_contents">
                                         <th>내용</td>
-                                        <td class="td_img">
+                                            <?php if($boardInfo['boardImgFile'] != 'Img_default.jpg') { ?>
                                             <img src="../assets/board/<?=$boardInfo['boardImgFile']?>"
                                                 alt="<?=$boardInfo['boardTitle']?>">
-                                        </td>
+                                            <?php } ?>
                                         <td class="b_contents_style" style="text-align: left; line-height: 1.6rem;">
                                             <?=$boardInfo['boardContents']?>
                                         </td>
@@ -95,7 +95,9 @@
 
                     <div class="board__btns">
                         <a href="board.php" class="btn__style3 m10aa">목록보기</a>
-                        <?php if($isAuthor) { ?>
+                        <?php 
+    $isAuthor = ($youId == $boardInfo['boardAuthor'] || $youId == 'myadmin');
+    if($isAuthor) { ?>
                         <a href="boardModify.php?boardId=<?= $_GET['boardId'] ?>" class="btn__style3 m10aa">수정하기</a>
                         <a href="boardDelete.php?boardId=<?= $_GET['boardId'] ?>" class="btn__style3 m10aa"
                             onclick="return confirm('정말 삭제하시겠습니까?')">삭제하기</a>
@@ -208,6 +210,13 @@
                 })
             }
         });
+
+        $("#commentWrite").on('keypress', function(e) {
+            if (e.which == 13) { // 엔터쳐도 댓글 작성 가능
+                e.preventDefault();
+                $("#commentWriteBtn").click();
+            }
+        });
     });
 
     $(".delete").click(function(e) {
@@ -225,7 +234,7 @@
                     location.reload();
                 },
                 error: function(request, status, error) {
-                    alert("댓글 삭제에 실패했습니다. 다시 시도해주세요.");
+                    alert(JSON.parse(request.responseText).message);
                 }
             })
         }
@@ -249,7 +258,7 @@
                     location.reload();
                 },
                 error: function(request, status, error) {
-                    alert("댓글 수정에 실패했습니다. 다시 시도해주세요.");
+                    alert(JSON.parse(request.responseText).message);
                 }
             })
         }
